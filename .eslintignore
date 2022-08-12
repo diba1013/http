@@ -1,7 +1,9 @@
 .vscode
+
 node_modules
+dist
+build
 coverage
-/dist
 
 pnpm-lock.yaml
 

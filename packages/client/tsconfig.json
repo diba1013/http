@@ -1,0 +1,12 @@
+{
+	"extends": "../../tsconfig.base.json",
+	"compilerOptions": {
+		"composite": true,
+		"baseUrl": ".",
+		"lib": ["ESNext", "DOM"],
+		"paths": {
+			"@/*": ["src/*"]
+		}
+	},
+	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts", "package.json"]
+}

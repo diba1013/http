@@ -1,11 +1,10 @@
 {
-	"extends": "./tsconfig.base.json",
-	"compilerOptions": {
-		"baseUrl": ".",
-		"lib": ["ESNext"],
-		"paths": {
-			"@/*": ["src/*"]
+	"references": [
+		{
+			"path": "packages/client/tsconfig.json"
+		},
+		{
+			"path": "packages/graphql/tsconfig.json"
 		}
-	},
-	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts"]
+	]
 }

@@ -9,6 +9,8 @@ jobs:
   publish:
     runs-on: ubuntu-latest
     name: Publish artifact
+    env:
+      NPM_GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
 
     steps:
       - name: Checkout
@@ -20,23 +22,19 @@ jobs:
           version: latest
 
       - name: Setup node
-        uses: actions/setup-node@v2
+        uses: actions/setup-node@v3
         with:
           node-version: 16
           cache: pnpm
 
       - name: Install
-        env:
-          NPM_GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
           pnpm install --frozen-lockfile
 
       - name: Build
         run: |
-          pnpm build
+          pnpm -r build
 
       - name: Publish
-        env:
-          NPM_GITHUB_TOKEN: ${{ secrets.NPM_TOKEN }}
         run: |
-          pnpm publish --no-git-checks
+          pnpm -r publish --no-git-checks

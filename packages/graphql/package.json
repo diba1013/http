@@ -1,0 +1,45 @@
+{
+	"name": "@diba1013/graphql",
+	"version": "0.0.1",
+	"description": "A small wrapper around the fetch-API",
+	"keywords": [],
+	"license": "MIT",
+	"repository": {
+		"type": "git",
+		"url": "git://github.com/diba1013/htp.git",
+		"directory": "packages/graphql"
+	},
+	"author": "diba1013",
+	"engines": {
+		"node": ">=16"
+	},
+	"type": "commonjs",
+	"files": [
+		"dist"
+	],
+	"exports": {
+		"import": "./dist/index.mjs",
+		"require": "./dist/index.js"
+	},
+	"main": "./dist/index.js",
+	"module": "./dist/index.mjs",
+	"types": "./dist/index.d.ts",
+	"scripts": {
+		"build": "tscz",
+		"build:watch": "tscz --watch",
+		"test": "vitest run",
+		"test:watch": "vitest"
+	},
+	"dependencies": {
+		"@diba1013/fetch": "workspace:*",
+		"graphql": "^16.6.0"
+	},
+	"devDependencies": {
+		"@diba1013/tscz": "0.1.1",
+		"@types/node": "^18.7.14",
+		"@vitest/coverage-c8": "^0.22.1",
+		"typescript": "~4.7",
+		"vite": "^3.0.9",
+		"vitest": "^0.22.1"
+	}
+}
