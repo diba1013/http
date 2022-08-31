@@ -6,7 +6,7 @@
 	"license": "MIT",
 	"repository": {
 		"type": "git",
-		"url": "git://github.com/diba1013/http.git",
+		"url": "https://github.com/diba1013/http",
 		"directory": "packages/client"
 	},
 	"author": "diba1013",
