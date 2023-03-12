@@ -1,7 +1,6 @@
 import { beforeEach, describe, it, Mock, vi } from "vitest";
-import { Headers, RequestBody } from "@/global.types";
+import { RequestHeaders, RequestBody, RequestExecutor } from "@/global.types";
 import { ConvertingRequestExecutor } from "@/basic.executor";
-import { RequestExecutor } from "@/client.types";
 
 describe.todo("ConvertingRequestExecutor", () => {
 	let fetch: Mock<[string, RequestInit], Promise<Response>>;

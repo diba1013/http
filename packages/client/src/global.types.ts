@@ -1,22 +1,21 @@
-export type Request<T = RequestBody> = {
-	url: string;
-	method: RequestMethod;
-	headers: RequestHeaders;
-	body?: T;
-};
-
-export type RequestHeaders = {
-	[K: string]: string;
-};
+export type MaybeArray<T> = T | T[];
 
 export type RequestMethod = "get" | "delete" | "head" | "options" | "post" | "put" | "patch";
 
-export type RequestBody = RequestParameter | RequestParameters | RequestParameters[];
-
-export type RequestParameter = number | number[] | string | string[];
-
+export type RequestParameter = number | string;
 export type RequestParameters = {
-	[K: string]: RequestParameter | RequestParameters | RequestParameters[] | undefined;
+	[K: string]: MaybeArray<RequestParameter> | undefined;
+};
+export type RequestBody = MaybeArray<{
+	[K in string]: MaybeArray<RequestParameter> | RequestBody | undefined;
+}>;
+
+export type RequestHeaders = {
+	[K: string]: string | undefined;
+};
+
+export type ResponseHeaders = {
+	[K: string]: string;
 };
 
 export type BasicCredentials = {
@@ -32,35 +31,44 @@ export type BearerCredentials = {
 
 export type DynamicCredentials = {
 	type: "dynamic";
-	token(fetch: Client): Promise<Credentials | undefined>;
+	token: (fetch: Client) => Promise<Credentials | undefined>;
 };
 
 export type Credentials = BasicCredentials | BearerCredentials | DynamicCredentials;
 
 export type CredentialSecurity = "force" | "lenient" | "none";
 
-export type RequestConfig<Parameters extends RequestParameters = RequestParameters> = {
+export type RequestConfig<
+	Parameters extends RequestParameters = RequestParameters,
+	Body extends RequestBody = RequestBody,
+> = {
+	method?: RequestMethod;
 	url?: string;
+	path?: string;
 	headers?: RequestHeaders;
-	params?: Parameters;
 	credentials?: Credentials;
 	secure?: CredentialSecurity;
+	parameters?: Parameters;
+	body?: Body;
+};
+
+export type Request<Body extends RequestBody = RequestBody> = {
+	url: string;
+	method: RequestMethod;
+	headers: RequestHeaders;
+	body?: Body;
 };
 
 export type ResponseConfig = {
 	ok: boolean;
-	status: Status;
+	status: ResponseStatus;
 	headers: ResponseHeaders;
 	response: Response;
 };
 
-export type Status = {
+export type ResponseStatus = {
 	code: number;
 	text: string;
-};
-
-export type ResponseHeaders = {
-	[K: string]: string;
 };
 
 export type Response = {
@@ -72,21 +80,11 @@ export type Response = {
 };
 
 export interface RequestExecutor {
-	send<T = RequestBody>(request: Request<T>): Promise<ResponseConfig>;
+	execute<Body extends RequestBody>(request: Request<Body>): Promise<ResponseConfig>;
 }
 
 export interface Client {
-	get(url: string, config?: RequestConfig): Promise<ResponseConfig>;
-
-	delete(url: string, config?: RequestConfig): Promise<ResponseConfig>;
-
-	head(url: string, config?: RequestConfig): Promise<ResponseConfig>;
-
-	options(url: string, config?: RequestConfig): Promise<ResponseConfig>;
-
-	post<T extends RequestBody>(url: string, data?: T, config?: RequestConfig): Promise<ResponseConfig>;
-
-	put<T extends RequestBody>(url: string, data?: T, config?: RequestConfig): Promise<ResponseConfig>;
-
-	patch<T extends RequestBody>(url: string, data?: T, config?: RequestConfig): Promise<ResponseConfig>;
+	execute<Parameters extends RequestParameters = RequestParameters, Body extends RequestBody = RequestBody>(
+		config: RequestConfig<Parameters, Body>,
+	): Promise<ResponseConfig>;
 }

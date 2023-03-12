@@ -1,4 +1,11 @@
-import { Request as FetchRequest, RequestExecutor, ResponseConfig, ResponseHeaders } from "@/global.types";
+import {
+	Request as FetchRequest,
+	RequestBody,
+	RequestExecutor,
+	RequestHeaders,
+	ResponseConfig,
+	ResponseHeaders,
+} from "@/global.types";
 
 export type FetchAdapter = {
 	fetch(input: string, init?: RequestInit): Promise<Response>;
@@ -11,7 +18,7 @@ export class ConvertingRequestExecutor implements RequestExecutor {
 		this.$adapter = adapter;
 	}
 
-	async send<T>(request: FetchRequest<T>): Promise<ResponseConfig> {
+	async execute<Body extends RequestBody>(request: FetchRequest<Body>): Promise<ResponseConfig> {
 		const init = this.convert(request);
 		const response = await this.$adapter.fetch(request.url, init);
 
@@ -26,17 +33,17 @@ export class ConvertingRequestExecutor implements RequestExecutor {
 		};
 	}
 
-	convert<T>(request: FetchRequest<T>): RequestInit {
+	convert<T extends RequestBody>(request: FetchRequest<T>): RequestInit {
 		const { method, headers, body } = request;
 
 		return {
 			method,
-			headers,
+			headers: this.wrap(headers),
 			body: this.encode(body),
 		};
 	}
 
-	encode<T>(body: T | undefined): BodyInit | undefined {
+	encode<T extends RequestBody>(body: T | undefined): BodyInit | undefined {
 		if (body === undefined) {
 			return undefined;
 		}
@@ -44,6 +51,18 @@ export class ConvertingRequestExecutor implements RequestExecutor {
 			return body;
 		}
 		return JSON.stringify(body);
+	}
+
+	wrap(headers: RequestHeaders): HeadersInit {
+		const h: ResponseHeaders = {};
+
+		for (const [key, value] of Object.entries(headers)) {
+			if (value !== undefined) {
+				h[key] = value;
+			}
+		}
+
+		return h;
 	}
 
 	unwrap(headers: Headers): ResponseHeaders {

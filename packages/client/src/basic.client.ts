@@ -3,21 +3,20 @@ import {
 	Credentials,
 	RequestBody,
 	RequestConfig,
-	RequestMethod,
 	CredentialSecurity,
 	BearerCredentials,
 	ResponseConfig,
 	RequestExecutor,
 	RequestHeaders,
+	RequestParameters,
 } from "@/global.types";
 import { CredentialsEncoder } from "@/client.types";
-import { url as join, merge } from "@/util";
+import { url as concatenate } from "@/util";
 
-type ResolvedRequestConfig = {
-	url: string;
-	headers: RequestHeaders;
-	data?: RequestBody;
-	credentials?: BearerCredentials;
+export type BasicClientProperties = {
+	executor: RequestExecutor;
+	encoder: CredentialsEncoder;
+	config?: RequestConfig;
 };
 
 export class BasicClient implements Client {
@@ -26,57 +25,47 @@ export class BasicClient implements Client {
 
 	private readonly config: RequestConfig;
 
-	constructor(executor: RequestExecutor, encoder: CredentialsEncoder, config: RequestConfig = {}) {
+	constructor({ executor, encoder, config = {} }: BasicClientProperties) {
 		this.executor = executor;
 		this.encoder = encoder;
 		this.config = config;
 	}
 
-	async send(
-		method: RequestMethod,
-		{ url, headers, credentials, data: body }: ResolvedRequestConfig,
-	): Promise<ResponseConfig> {
-		return this.executor.send({
+	async execute<Parameters extends RequestParameters = RequestParameters, Body extends RequestBody = RequestBody>({
+		method = "get",
+		url = this.config.url,
+		path = "/",
+		headers = {},
+		credentials = this.config.credentials,
+		secure = this.config.secure,
+		parameters,
+		body,
+	}: RequestConfig<Parameters, Body>): Promise<ResponseConfig> {
+		return await this.executor.execute<Body>({
 			method,
-			url,
-			headers: this.headers(headers, credentials, body),
+			url: this.join(url, path, parameters),
+			headers: this.headers(headers, await this.authorize(this, secure, credentials), body),
 			body,
 		});
 	}
 
-	headers(headers: RequestHeaders, credentials?: BearerCredentials, data?: RequestBody): RequestHeaders {
-		const copy = { ...headers };
+	join(url: string | undefined, path: string, parameters: RequestParameters = {}) {
+		const copy = Object.assign({}, this.config.parameters ?? {}, parameters);
+		return concatenate(url, path, copy);
+	}
 
-		if (headers["content-type"] === undefined && data !== undefined) {
+	headers(headers: RequestHeaders, credentials?: BearerCredentials, data?: RequestBody): RequestHeaders {
+		const copy = Object.assign({}, this.config.headers ?? {}, headers);
+
+		if (copy["content-type"] === undefined && data !== undefined) {
 			copy["content-type"] = "application/json";
 		}
 
-		if (headers["authorization"] === undefined && credentials !== undefined) {
+		if (copy["authorization"] === undefined && credentials !== undefined) {
 			copy["authorization"] = `${credentials.type} ${credentials.token}`;
 		}
-		console.log("DONE HEADERS");
 
 		return copy;
-	}
-
-	async resolve(path: string, config: RequestConfig = {}, data?: RequestBody): Promise<ResolvedRequestConfig> {
-		console.log("Resolving");
-		const base = config.url ?? this.config.url;
-		const parameters = merge(this.config.params, config.params) ?? {};
-		const url = join(base, path, parameters);
-		const headers = merge(this.config.headers, config.headers) ?? {};
-
-		const secure = config.secure ?? this.config.secure;
-		console.log("PREPARIGN credentaisl");
-		const credentials = await this.authorize(this, secure, config.credentials ?? this.config.credentials);
-		console.log("GOT credentials");
-
-		return {
-			url,
-			headers,
-			data,
-			credentials,
-		};
 	}
 
 	async authorize(
@@ -85,54 +74,19 @@ export class BasicClient implements Client {
 		credentials?: Credentials,
 	): Promise<BearerCredentials | undefined> {
 		if (secure === "force" && credentials === undefined) {
-			// Enfore credentials
+			// Enforce credentials
 			throw new Error(`Credentials has been set to '${secure}' but none have been provided.`);
 		}
 		if (secure === "none" || credentials === undefined) {
-			// Ignore credendials
+			// Ignore credentials
 			return undefined;
 		}
 		// Re-trigger security check
 		const resolved = await this.encoder.resolve(credentials, client);
 		if (secure === "force" && resolved === undefined) {
-			// Enfore credentials
+			// Enforce credentials
 			throw new Error(`Credentials has been set to '${secure}' but none have been provided.`);
 		}
 		return resolved;
-	}
-
-	async get(path: string, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config);
-		return this.send("get", options);
-	}
-
-	async delete(path: string, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config);
-		return this.send("delete", options);
-	}
-
-	async head(path: string, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config);
-		return this.send("head", options);
-	}
-
-	async options(path: string, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config);
-		return this.send("options", options);
-	}
-
-	async post<T extends RequestBody>(path: string, data?: T, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config, data);
-		return this.send("post", options);
-	}
-
-	async put<T extends RequestBody>(path: string, data?: T, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config, data);
-		return this.send("put", options);
-	}
-
-	async patch<T extends RequestBody>(path: string, data?: T, config?: RequestConfig): Promise<ResponseConfig> {
-		const options = await this.resolve(path, config, data);
-		return this.send("patch", options);
 	}
 }

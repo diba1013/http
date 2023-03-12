@@ -22,11 +22,11 @@ export function api({ encoder }: Context): API {
 		VERSION: "__VERSION__",
 
 		Clients: {
-			create(options?: RequestConfig): Client {
+			create(config?: RequestConfig): Client {
 				const executor = new ConvertingRequestExecutor({
 					fetch,
 				});
-				return new BasicClient(executor, encoder, options);
+				return new BasicClient({ executor, encoder, config });
 			},
 		},
 	};
