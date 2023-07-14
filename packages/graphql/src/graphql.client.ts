@@ -1,5 +1,5 @@
-import { Client } from "@diba1013/fetch";
 import { GraphClient, GraphRequest, GraphResponse } from "@/global.types";
+import { Client } from "@diba1013/fetch";
 
 export type FetchGraphClientProvider = {
 	fetch: Client;
@@ -13,7 +13,10 @@ export class FetchGraphClient implements GraphClient {
 	}
 
 	async execute<T>(request: GraphRequest): Promise<T> {
-		const { ok, response } = await this.$fetch.post<GraphRequest>("/", request);
+		const { ok, response } = await this.$fetch.execute<never, GraphRequest>({
+			path: "/",
+			body: request,
+		});
 		if (ok) {
 			const { data, errors }: GraphResponse<T> = await response.json();
 			if (errors !== undefined) {

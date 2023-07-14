@@ -1,3 +1,4 @@
+export type MaybePromise<T> = T | PromiseLike<T> | Promise<T>;
 export type MaybeArray<T> = T | T[];
 
 export type RequestMethod = "get" | "delete" | "head" | "options" | "post" | "put" | "patch";

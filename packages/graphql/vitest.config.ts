@@ -14,6 +14,7 @@ export default defineConfig({
 		coverage: {
 			enabled: true,
 			all: true,
+			provider: "v8",
 			include: ["src/**/*.ts"],
 			exclude: ["src/**/*.types.ts"],
 			reporter: ["html", "text-summary", "lcovonly"],

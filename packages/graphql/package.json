@@ -13,16 +13,16 @@
 	"engines": {
 		"node": ">=16"
 	},
-	"type": "commonjs",
+	"type": "module",
 	"files": [
 		"dist"
 	],
 	"exports": {
-		"import": "./dist/index.mjs",
-		"require": "./dist/index.js"
+		"import": "./dist/index.js",
+		"require": "./dist/index.cjs"
 	},
-	"main": "./dist/index.js",
-	"module": "./dist/index.mjs",
+	"main": "./dist/index.cjs",
+	"module": "./dist/index.js",
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tscz",
@@ -32,14 +32,14 @@
 	},
 	"dependencies": {
 		"@diba1013/fetch": "workspace:*",
-		"graphql": "^16.6.0"
+		"graphql": "^16.7.1"
 	},
 	"devDependencies": {
-		"@diba1013/tscz": "0.1.1",
-		"@types/node": "^18.15.0",
-		"@vitest/coverage-c8": "^0.29.2",
-		"typescript": "~4.9",
-		"vite": "^4.1.4",
-		"vitest": "^0.29.2"
+		"@diba1013/tscz": "0.2.1",
+		"@types/node": "^20.4.1",
+		"@vitest/coverage-v8": "^0.33.0",
+		"typescript": "~5.1",
+		"vite": "^4.4.2",
+		"vitest": "^0.33.0"
 	}
 }

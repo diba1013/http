@@ -1,5 +1,5 @@
-import { describe, expect, it } from "vitest";
 import { url } from "@/util";
+import { describe, expect, it } from "vitest";
 
 describe("url", () => {
 	it("should return base if parameters are undefined", () => {

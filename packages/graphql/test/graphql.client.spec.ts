@@ -1,7 +1,7 @@
-import { Client } from "@diba1013/fetch";
-import { beforeEach, describe, expect, it, Mocked, vi } from "vitest";
 import { GraphResponse } from "@/global.types";
 import { FetchGraphClient } from "@/graphql.client";
+import { Client } from "@diba1013/fetch";
+import { Mocked, beforeEach, describe, expect, it, vi } from "vitest";
 
 type FetchGraphClientTestContext = {
 	fetch: Mocked<Client>;
@@ -11,13 +11,7 @@ type FetchGraphClientTestContext = {
 describe<FetchGraphClientTestContext>("FetchGraphClient", () => {
 	beforeEach<FetchGraphClientTestContext>((context) => {
 		context.fetch = {
-			get: vi.fn(),
-			delete: vi.fn(),
-			head: vi.fn(),
-			options: vi.fn(),
-			post: vi.fn(),
-			put: vi.fn(),
-			patch: vi.fn(),
+			execute: vi.fn(),
 		};
 
 		context.cut = new FetchGraphClient({
@@ -36,7 +30,7 @@ describe<FetchGraphClientTestContext>("FetchGraphClient", () => {
 			],
 		};
 
-		fetch.post.mockResolvedValue({
+		fetch.execute.mockResolvedValue({
 			ok: true,
 			headers: {},
 			status: {
@@ -44,6 +38,8 @@ describe<FetchGraphClientTestContext>("FetchGraphClient", () => {
 				text: "ok",
 			},
 			response: {
+				// Satisfies type
+				// eslint-disable-next-line @typescript-eslint/require-await
 				async json<R>(): Promise<R> {
 					return response as R;
 				},

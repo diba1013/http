@@ -1,5 +1,5 @@
-import { Config, defineConfig, Platform } from "@diba1013/tscz";
 import { version } from "./package.json";
+import { Config, Platform, defineConfig } from "@diba1013/tscz";
 
 function entry(environment: Platform): Config {
 	return {
@@ -12,7 +12,7 @@ function entry(environment: Platform): Config {
 				name: environment,
 			},
 		],
-		define: {
+		env: {
 			__VERSION__: version,
 			__ENVIRONMENT__: environment,
 		},

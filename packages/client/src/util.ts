@@ -1,5 +1,5 @@
-import { configure } from "urlcat";
 import type { RequestParameters } from "@/global.types";
+import { configure } from "urlcat";
 
 const concatenate = configure({});
 

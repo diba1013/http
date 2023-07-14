@@ -1,6 +1,6 @@
-import { beforeEach, describe, it, Mock, vi } from "vitest";
-import { RequestHeaders, RequestBody, RequestExecutor } from "@/global.types";
 import { ConvertingRequestExecutor } from "@/basic.executor";
+import { RequestBody, RequestExecutor, RequestHeaders } from "@/global.types";
+import { Mock, beforeEach, describe, it, vi } from "vitest";
 
 describe.todo("ConvertingRequestExecutor", () => {
 	let fetch: Mock<[string, RequestInit], Promise<Response>>;
@@ -8,6 +8,8 @@ describe.todo("ConvertingRequestExecutor", () => {
 	let cut: RequestExecutor;
 
 	beforeEach(() => {
+		// Satisfies type
+		// eslint-disable-next-line @typescript-eslint/require-await
 		fetch = vi.fn(async (url, init): Promise<Response> => {
 			return new Response(undefined, {
 				headers: init.headers,
@@ -21,16 +23,16 @@ describe.todo("ConvertingRequestExecutor", () => {
 		});
 	});
 
-	it("send should encode json body", async ({ expect }) => {
+	it("execute should encode json body", async ({ expect }) => {
 		const url = "https://example.com";
-		const headers: Headers = {
+		const headers: RequestHeaders = {
 			"content-type": "application/json",
 		};
 		const body: RequestBody = {
 			message: "Hello",
 		};
 
-		await cut.send({
+		await cut.execute({
 			url,
 			method: "get",
 			headers,

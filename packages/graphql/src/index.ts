@@ -1,8 +1,9 @@
-import { Clients } from "@diba1013/fetch";
 import { GraphClient, GraphClientOptions } from "@/global.types";
 import { FetchGraphClient } from "@/graphql.client";
+import { Clients } from "@diba1013/fetch";
 
 export { gql } from "@/gql.util";
+export * from "@/global.types";
 
 export const GraphQL = {
 	client({ url, credentials }: GraphClientOptions): GraphClient {
@@ -10,7 +11,7 @@ export const GraphQL = {
 			fetch: Clients.create({
 				url,
 				credentials,
-				secure: credentials !== undefined ? "force" : "lenient",
+				secure: credentials === undefined ? "lenient" : "force",
 			}),
 		});
 	},

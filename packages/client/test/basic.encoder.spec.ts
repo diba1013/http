@@ -1,7 +1,7 @@
-import { beforeEach, describe, expect, it, Mock, vi } from "vitest";
-import { BasicCredentials, BearerCredentials, Client, DynamicCredentials } from "@/global.types";
 import { ResolvingCredentialsEncoder } from "@/basic.encoder";
 import { CredentialsEncoder } from "@/client.types";
+import { BasicCredentials, BearerCredentials, Client, DynamicCredentials } from "@/global.types";
+import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
 
 describe("ResolvingCredentialsEncoder", () => {
 	let resolve: Mock;

@@ -6,28 +6,31 @@
 	"license": "MIT",
 	"author": "diba1013",
 	"engines": {
-		"node": ">=16"
+		"node": ">=20",
+		"pnpm": ">=8"
 	},
+	"type": "module",
 	"scripts": {
 		"prepare": "husky install",
 		"lint": "eslint .",
 		"lint:fix": "eslint --fix .",
-		"change": "pnpm version --workspaces ${npm_config_tag}; git add **/package.json; pnpm version --include-workspace-root --force ${npm_config_tag}"
+		"change": "pnpm changeset version; git add **/package.json ./.changeset/*.md; pnpm version --include-workspace-root --force ${npm_config_tag}"
 	},
 	"workspaces": [
 		"packages/**"
 	],
 	"devDependencies": {
-		"@commitlint/cli": "^17.4.4",
-		"@commitlint/config-conventional": "^17.4.4",
-		"@diba1013/eslint-config": "^0.5.0",
-		"@diba1013/prettier-config": "^0.5.0",
-		"@types/node": "^18.15.0",
-		"eslint": "^8.36.0",
+		"@changesets/cli": "^2.26.2",
+		"@commitlint/cli": "^17.6.6",
+		"@commitlint/config-conventional": "^17.6.6",
+		"@diba1013/eslint-config": "^0.7.4",
+		"@diba1013/prettier-config": "^0.7.4",
+		"@types/node": "^20.4.1",
+		"eslint": "^8.44.0",
 		"husky": "^8.0.3",
-		"lint-staged": "^13.2.0",
-		"prettier": "^2.8.4",
+		"lint-staged": "^13.2.3",
+		"prettier": "^3.0.0",
 		"ts-node": "^10.9.1",
-		"typescript": "~4.9"
+		"typescript": "~5.1"
 	}
 }

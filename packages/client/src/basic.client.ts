@@ -1,16 +1,16 @@
+import { CredentialsEncoder } from "@/client.types";
 import {
+	BearerCredentials,
 	Client,
+	CredentialSecurity,
 	Credentials,
 	RequestBody,
 	RequestConfig,
-	CredentialSecurity,
-	BearerCredentials,
-	ResponseConfig,
 	RequestExecutor,
 	RequestHeaders,
 	RequestParameters,
+	ResponseConfig,
 } from "@/global.types";
-import { CredentialsEncoder } from "@/client.types";
 import { url as concatenate } from "@/util";
 
 export type BasicClientProperties = {

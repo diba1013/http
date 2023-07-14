@@ -1,6 +1,6 @@
 import { Credentials, RequestParameters } from "@diba1013/fetch";
 
-export type { Credentials, RequestParameters, RequestParameter } from "@diba1013/fetch";
+export type { Credentials, RequestParameter, RequestParameters } from "@diba1013/fetch";
 
 export type GraphRequest = {
 	query: string;

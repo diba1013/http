@@ -1,15 +1,15 @@
-import { BasicCredentials } from "@/global.types";
 import { api } from "@/api/shared.api";
 import { ResolvingCredentialsEncoder } from "@/basic.encoder";
+import { BasicCredentials } from "@/global.types";
 
 export * from "@/global.types";
 
 const { ENVIRONMENT, VERSION, Clients } = api({
 	encoder: new ResolvingCredentialsEncoder({
-		resolve: async ({ username, password }: BasicCredentials): Promise<string> => {
+		resolve: ({ username, password }: BasicCredentials): string => {
 			return self.btoa(`${username}:${password}`);
 		},
 	}),
 });
 
-export { ENVIRONMENT, VERSION, Clients };
+export { Clients, ENVIRONMENT, VERSION };
