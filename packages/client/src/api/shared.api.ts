@@ -24,7 +24,9 @@ export function api({ encoder }: Context): API {
 		Clients: {
 			create(config?: RequestConfig): Client {
 				const executor = new ConvertingRequestExecutor({
-					fetch,
+					fetch: async (input, request) => {
+						return await fetch(input, request);
+					},
 				});
 				return new BasicClient({ executor, encoder, config });
 			},
