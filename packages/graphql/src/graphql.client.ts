@@ -14,6 +14,7 @@ export class FetchGraphClient implements GraphClient {
 
 	async execute<T>(request: GraphRequest): Promise<T> {
 		const { ok, response } = await this.$fetch.execute<never, GraphRequest>({
+			method: "post",
 			path: "/",
 			body: request,
 		});
