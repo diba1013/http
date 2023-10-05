@@ -38,6 +38,7 @@ export class ConvertingRequestExecutor implements RequestExecutor {
 
 		return {
 			method,
+			credentials: "include",
 			headers: this.wrap(headers),
 			body: this.encode(body),
 		};
