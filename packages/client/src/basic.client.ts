@@ -62,7 +62,9 @@ export class BasicClient implements Client {
 		}
 
 		if (copy["authorization"] === undefined && credentials !== undefined) {
-			copy["authorization"] = `${credentials.type} ${credentials.token}`;
+			copy["authorization"] = `${credentials.type[0].toUpperCase()}${credentials.type.slice(1)} ${
+				credentials.token
+			}`;
 		}
 
 		return copy;
