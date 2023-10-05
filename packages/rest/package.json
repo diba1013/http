@@ -1,7 +1,7 @@
 {
-	"name": "@diba1013/graphql",
+	"name": "@diba1013/rest",
 	"version": "0.2.2",
-	"description": "A small wrapper around the fetch-API",
+	"description": "A high level wrapper for REST APIs",
 	"keywords": [],
 	"license": "MIT",
 	"repository": {
@@ -30,15 +30,18 @@
 		"test": "vitest run",
 		"test:watch": "vitest"
 	},
+	"peerDependencies": {
+		"zod": "3.x"
+	},
 	"dependencies": {
-		"@diba1013/fetch": "workspace:*",
-		"graphql": "^16.8.1"
+		"@diba1013/fetch": "workspace:*"
 	},
 	"devDependencies": {
 		"@diba1013/tscz": "0.2.1",
 		"@types/node": "^20.8.2",
 		"@vitest/coverage-v8": "^0.34.6",
 		"typescript": "~5.2",
-		"vitest": "^0.34.6"
+		"vitest": "^0.34.6",
+		"zod": "^3.22.4"
 	}
 }
