@@ -51,6 +51,7 @@ export type RequestConfig<
 	secure?: CredentialSecurity;
 	parameters?: Parameters;
 	body?: Body;
+	signal?: AbortSignal;
 };
 
 export type Request<Body extends RequestBody = RequestBody> = {
@@ -58,6 +59,7 @@ export type Request<Body extends RequestBody = RequestBody> = {
 	method: RequestMethod;
 	headers: RequestHeaders;
 	body?: Body;
+	signal?: AbortSignal;
 };
 
 export type ResponseConfig = {

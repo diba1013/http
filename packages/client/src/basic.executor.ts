@@ -34,13 +34,14 @@ export class ConvertingRequestExecutor implements RequestExecutor {
 	}
 
 	convert<T extends RequestBody>(request: FetchRequest<T>): RequestInit {
-		const { method, headers, body } = request;
+		const { method, headers, body, signal } = request;
 
 		return {
 			method,
 			credentials: "include",
 			headers: this.wrap(headers),
 			body: this.encode(body),
+			signal,
 		};
 	}
 

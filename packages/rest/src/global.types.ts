@@ -62,6 +62,7 @@ export type EndpointOptions<Endpoints extends EndpointDefinitions, ID extends En
 	request?: EndpointRequest<Endpoints, ID>;
 	headers?: RequestHeaders;
 	credentials?: Credentials;
+	signal?: AbortSignal;
 };
 
 export interface RestClient<Endpoints extends EndpointDefinitions> {
