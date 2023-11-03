@@ -10,6 +10,7 @@ import type {
 	Client,
 	RequestBody,
 	RequestHeaders,
+	RequestMethod,
 	RequestParameter,
 	RequestParameters,
 	Response,
@@ -25,7 +26,11 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 		this.$fetch = fetch;
 	}
 
-	private async prepare<ID extends EndpointIdentifier<Endpoints>>(id: ID, request?: EndpointRequest<Endpoints, ID>) {
+	private async prepare<ID extends EndpointIdentifier<Endpoints>>(
+		id: ID,
+		method: RequestMethod,
+		request?: EndpointRequest<Endpoints, ID>,
+	) {
 		const {
 			params: keys = [],
 			request: config = {
@@ -39,15 +44,13 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 
 		// TODO refactor to strategy pattern
 		if (config.type === "application/json" && request !== undefined) {
-			headers["content-type"] = config.type;
-
 			// This is fine since endpoints using generic any
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
 			const validated = await config.schema.parseAsync(request);
 			const typed = validated as EndpointRequest<Endpoints, ID>;
 
 			for (const [key, value] of Object.entries(typed)) {
-				if (keys.includes(key)) {
+				if (method === "get" || method === "head" || method === "options" || keys.includes(key)) {
 					parameters[key] = value as RequestParameter;
 				} else {
 					body[key] = value as RequestBody;
@@ -64,12 +67,13 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 
 	private async process<ID extends EndpointIdentifier<Endpoints>>(
 		id: ID,
-		{ ["content-type"]: contentType }: ResponseHeaders,
+		{ ["content-type"]: rawContentType }: ResponseHeaders,
 		response: Response,
 	) {
 		const { response: config = { type: "" } } = this.$endpoints[id];
 
-		// TODO should this be lenient (configurable) and fallback to json, what about charset?
+		// TODO should this be lenient (configurable) and fallback to json
+		const [contentType] = rawContentType.split(";");
 		if (config.type !== contentType) {
 			throw new Error(
 				`Failed to process request '${String(id)}' due to incompatible content '${
@@ -80,15 +84,19 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 
 		// TODO refactor to strategy pattern
 		if (config.type === "application/json") {
-			// This is fine since endpoints using generic any
+			const content = await response.json();
+			// Since any is used in the schema definitions, we need to disable it here
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
-			const validated = await config.schema.parseAsync(await response.json());
+			const validated = await config.schema.parseAsync(content);
 			const typed = validated as EndpointResponse<Endpoints, ID>;
 			return typed;
 		}
 
 		if (config.type === "text/plain") {
-			const validated = await response.text();
+			const content = await response.text();
+			// Since any is used in the schema definitions, we need to disable it here
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+			const validated = (await config.schema?.parseAsync(content)) ?? content;
 			// TODO can this be enforced on endpoint level?
 			const typed = validated as unknown as EndpointResponse<Endpoints, ID>;
 			return typed;
@@ -103,7 +111,7 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 	): Promise<EndpointResponse<Endpoints, ID>> {
 		const { method, path } = this.$endpoints[id];
 
-		const { headers, parameters, body } = await this.prepare(id, options.request);
+		const { headers, parameters, body } = await this.prepare(id, method, options.request);
 		const {
 			ok,
 			headers: responseHeaders,
@@ -119,6 +127,7 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 			parameters,
 			body: method === "get" || method === "head" || method === "options" ? undefined : body,
 			credentials: options.credentials,
+			signal: options.signal,
 		});
 
 		if (ok) {

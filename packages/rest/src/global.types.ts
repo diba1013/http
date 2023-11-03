@@ -10,7 +10,8 @@ export type EndpointDefinition<Request extends object = any, Response = any> = {
 	request?:
 		| {
 				type: "application/json";
-				schema: ZodType<Request>;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				schema: ZodType<any, any, Request>;
 		  }
 		| {
 				type: "";
@@ -18,10 +19,13 @@ export type EndpointDefinition<Request extends object = any, Response = any> = {
 	response?:
 		| {
 				type: "application/json";
-				schema: ZodType<Response>;
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				schema: ZodType<Response, any, any>;
 		  }
 		| {
 				type: "text/plain";
+				// eslint-disable-next-line @typescript-eslint/no-explicit-any
+				schema?: ZodType<Response, any, string>;
 		  }
 		| {
 				type: "";
@@ -37,7 +41,9 @@ export function defineEndpoints<Endpoints extends EndpointDefinitions>(endpoints
 	return endpoints;
 }
 
-export function defineEndpoint<Endpoint extends EndpointDefinition>(endpoint: Endpoint): Endpoint {
+export function defineEndpoint<Response, Request extends object>(
+	endpoint: EndpointDefinition<Request, Response>,
+): EndpointDefinition<Request, Response> {
 	return endpoint;
 }
 
