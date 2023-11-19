@@ -30,9 +30,14 @@ export type BearerCredentials = {
 	token: string;
 };
 
+export type DynamicCredentialsContext = {
+	client: Client;
+	invalidate: boolean;
+};
+
 export type DynamicCredentials = {
 	type: "dynamic";
-	token: (fetch: Client) => Promise<Credentials | undefined>;
+	token: (context: DynamicCredentialsContext) => Promise<Credentials | undefined>;
 };
 
 export type Credentials = BasicCredentials | BearerCredentials | DynamicCredentials;

@@ -1,10 +1,9 @@
-import { BasicClient } from "@/basic.client";
+import type { Client, RequestConfig } from "@/global.types";
+import { BasicClient, BasicCredentialsEncoder } from "@/basic.client";
 import { ConvertingRequestExecutor } from "@/basic.executor";
-import { CredentialsEncoder } from "@/client.types";
-import { Client, RequestConfig } from "@/global.types";
 
 export type Context = {
-	encoder: CredentialsEncoder;
+	encoder: BasicCredentialsEncoder;
 };
 
 export type API = {

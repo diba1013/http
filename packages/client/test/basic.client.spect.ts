@@ -1,21 +1,25 @@
-import { ResolvingCredentialsEncoder } from "@/basic.encoder";
-import { CredentialsEncoder } from "@/client.types";
-import { BasicCredentials, BearerCredentials, Client, DynamicCredentials } from "@/global.types";
+import { BasicClient } from "@/basic.client";
+import { BasicCredentials, BearerCredentials, DynamicCredentials, DynamicCredentialsContext } from "@/global.types";
 import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("ResolvingCredentialsEncoder", () => {
+describe("BasicClient.resolve", () => {
 	let resolve: Mock;
-	let client: Client;
+	let client: DynamicCredentialsContext;
 
-	let cut: CredentialsEncoder;
+	let cut: BasicClient;
 
 	beforeEach(() => {
-		client = {} as Client;
+		client = {} as DynamicCredentialsContext;
 
 		resolve = vi.fn();
 
-		cut = new ResolvingCredentialsEncoder({
-			resolve,
+		cut = new BasicClient({
+			encoder: {
+				resolve,
+			},
+			executor: {
+				execute: vi.fn(),
+			},
 		});
 	});
 
