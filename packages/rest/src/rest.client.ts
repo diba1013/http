@@ -134,6 +134,7 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 			return await this.process(id, responseHeaders, response);
 		}
 
+		// TODO introduce special error here to have access to properties
 		throw new Error(`Failed to execute request '${String(id)}' (${status.code})`, {
 			cause: new Error(status.text),
 		});
