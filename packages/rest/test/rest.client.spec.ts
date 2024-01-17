@@ -1,3 +1,5 @@
 import { it } from "vitest";
 
-it.todo("empty", () => {});
+it.todo("empty", () => {
+	// Ignore
+});

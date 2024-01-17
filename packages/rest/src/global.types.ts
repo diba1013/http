@@ -32,10 +32,8 @@ export type EndpointDefinition<Request extends object = any, Response = any> = {
 		  };
 };
 
-export type EndpointDefinitions = {
-	// eslint-disable-next-line @typescript-eslint/no-explicit-any
-	[Endpoint: string]: EndpointDefinition<any, any>;
-};
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type EndpointDefinitions = Record<string, EndpointDefinition<any, any>>;
 
 export function defineEndpoints<Endpoints extends EndpointDefinitions>(endpoints: Endpoints): Endpoints {
 	return endpoints;
@@ -50,19 +48,15 @@ export function defineEndpoint<Response, Request extends object>(
 export type EndpointIdentifier<Endpoints extends EndpointDefinitions> = keyof Endpoints;
 export type Endpoint<Endpoints extends EndpointDefinitions, ID extends EndpointIdentifier<Endpoints>> = Endpoints[ID];
 
-export type EndpointRequest<Endpoints extends EndpointDefinitions, ID extends EndpointIdentifier<Endpoints>> = Endpoint<
-	Endpoints,
-	ID
-> extends EndpointDefinition<infer Request, any> // eslint-disable-line @typescript-eslint/no-explicit-any
-	? Request
-	: never;
+export type EndpointRequest<Endpoints extends EndpointDefinitions, ID extends EndpointIdentifier<Endpoints>> =
+	Endpoint<Endpoints, ID> extends EndpointDefinition<infer Request, any> // eslint-disable-line @typescript-eslint/no-explicit-any
+		? Request
+		: never;
 
-export type EndpointResponse<
-	Endpoints extends EndpointDefinitions,
-	ID extends EndpointIdentifier<Endpoints>,
-> = Endpoint<Endpoints, ID> extends EndpointDefinition<any, infer Response> // eslint-disable-line @typescript-eslint/no-explicit-any
-	? Response
-	: never;
+export type EndpointResponse<Endpoints extends EndpointDefinitions, ID extends EndpointIdentifier<Endpoints>> =
+	Endpoint<Endpoints, ID> extends EndpointDefinition<any, infer Response> // eslint-disable-line @typescript-eslint/no-explicit-any
+		? Response
+		: never;
 
 export type EndpointOptions<Endpoints extends EndpointDefinitions, ID extends EndpointIdentifier<Endpoints>> = {
 	request?: EndpointRequest<Endpoints, ID>;

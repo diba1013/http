@@ -4,20 +4,18 @@ export type MaybeArray<T> = T | T[];
 export type RequestMethod = "get" | "delete" | "head" | "options" | "post" | "put" | "patch";
 
 export type RequestParameter = number | string;
-export type RequestParameters = {
-	[K: string]: MaybeArray<RequestParameter> | undefined;
-};
+export type RequestParameters = Record<string, MaybeArray<RequestParameter> | undefined>;
 export type RequestBody = MaybeArray<{
 	[K in string]: MaybeArray<RequestParameter> | RequestBody | undefined;
 }>;
 
-export type RequestHeaders = {
-	[K: string]: string | undefined;
+export type CommonHeaders = {
+	"content-type"?: string;
 };
 
-export type ResponseHeaders = {
-	[K: string]: string;
-};
+export type RequestHeaders = CommonHeaders & Record<string, string | string[] | undefined>;
+
+export type ResponseHeaders = CommonHeaders & Record<string, string | string[]>;
 
 export type BasicCredentials = {
 	type: "basic";
@@ -87,12 +85,12 @@ export type Response = {
 	text(): Promise<string>;
 };
 
-export interface RequestExecutor {
+export type RequestExecutor = {
 	execute<Body extends RequestBody>(request: Request<Body>): Promise<ResponseConfig>;
-}
+};
 
-export interface Client {
+export type Client = {
 	execute<Parameters extends RequestParameters = RequestParameters, Body extends RequestBody = RequestBody>(
 		config: RequestConfig<Parameters, Body>,
 	): Promise<ResponseConfig>;
-}
+};

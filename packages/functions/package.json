@@ -1,13 +1,13 @@
 {
-	"name": "@diba1013/rest",
+	"name": "@diba1013/functions",
 	"version": "0.2.2",
-	"description": "A high level wrapper for REST APIs",
+	"description": "A wrapper for handler functions and node server",
 	"keywords": [],
 	"license": "MIT",
 	"repository": {
 		"type": "git",
 		"url": "https://github.com/diba1013/http",
-		"directory": "packages/graphql"
+		"directory": "packages/functions"
 	},
 	"author": "diba1013",
 	"engines": {
@@ -31,18 +31,16 @@
 		"test": "vitest run",
 		"test:watch": "vitest"
 	},
-	"peerDependencies": {
-		"zod": "3.x"
-	},
 	"dependencies": {
-		"@diba1013/fetch": "workspace:*"
+		"@diba1013/fetch": "workspace:*",
+		"@diba1013/types": "^0.1.0",
+		"uWebSockets.js": "github:uNetworking/uWebSockets.js#v20.39.0"
 	},
 	"devDependencies": {
 		"@diba1013/tscz": "0.2.1",
 		"@types/node": "^20.11.5",
 		"@vitest/coverage-v8": "^1.2.0",
 		"typescript": "~5.3",
-		"vitest": "^1.2.0",
-		"zod": "^3.22.4"
+		"vitest": "^1.2.0"
 	}
 }

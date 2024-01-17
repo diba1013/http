@@ -82,10 +82,10 @@ export class BasicClient implements Client {
 			copy["content-type"] = "application/json";
 		}
 
-		if (copy["authorization"] === undefined && credentials !== undefined) {
+		if (copy.authorization === undefined && credentials !== undefined) {
 			const { type, token } = credentials;
 			const method = `${type[0].toUpperCase()}${type.slice(1)}`;
-			copy["authorization"] = `${method} ${token}`;
+			copy.authorization = `${method} ${token}`;
 		}
 
 		return copy;
@@ -142,11 +142,11 @@ export class BasicClient implements Client {
 				? {
 						type: "basic",
 						token: credentials.token,
-				  }
+					}
 				: {
 						type: "basic",
 						token: await this.encoder.resolve(credentials),
-				  };
+					};
 		}
 		if (credentials.type === "dynamic") {
 			const resolved = await credentials.token(context);

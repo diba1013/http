@@ -67,7 +67,7 @@ export class BasicRestClient<Endpoints extends EndpointDefinitions> implements R
 
 	private async process<ID extends EndpointIdentifier<Endpoints>>(
 		id: ID,
-		{ ["content-type"]: rawContentType }: ResponseHeaders,
+		{ ["content-type"]: rawContentType = "" }: ResponseHeaders,
 		response: Response,
 	) {
 		const { response: config = { type: "" } } = this.$endpoints[id];
