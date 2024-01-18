@@ -7,9 +7,16 @@ import type {
 	ServiceResponseBody,
 } from "@/global.types";
 import type { HttpRequest, HttpResponse } from "uWebSockets.js";
+import { RoutePath } from "@/path";
 import { STATUS_CODES } from "node:http";
 
-export class Router {
+export class Route {
+	public readonly $path: RoutePath;
+
+	constructor(pattern: string) {
+		this.$path = new RoutePath(pattern);
+	}
+
 	private pluck<Request extends ServiceRequestBody>(
 		request: HttpRequest,
 		signal: AbortSignal,
@@ -26,7 +33,6 @@ export class Router {
 		const url = new URL(`${path}?${request.getQuery()}`, `http://${headers.host ?? "localhost"}`);
 		const method = request.getMethod() as ServiceRequestMethod;
 
-		// TODO Do we want to add url params here too?
 		const context: Record<string, string | string[]> = {};
 		function merge(key: string, value: string) {
 			const seen = context[key];
@@ -38,7 +44,11 @@ export class Router {
 			}
 			return [seen, value];
 		}
-
+		// Append path parameters first
+		for (const [key, value] of this.$path.match(request)) {
+			context[key] = merge(key, value);
+		}
+		// Append query parameters second
 		for (const [key, value] of url.searchParams) {
 			context[key] = merge(key, value);
 		}

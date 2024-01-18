@@ -1,5 +1,5 @@
 import type { ServiceEndpoint, ServiceRequestBody, ServiceResponseBody } from "@/global.types";
-import { Router } from "@/route";
+import { Route } from "@/route";
 import { type TemplatedApp, App as createApp, us_socket_local_port } from "uWebSockets.js";
 
 export type ServerlessOptions = {
@@ -9,7 +9,6 @@ export type ServerlessOptions = {
 // Inspired by https://github.com/ionited/fiber
 export class Server {
 	private readonly $app: TemplatedApp = createApp();
-	private readonly $router = new Router();
 
 	private readonly $options: ServerlessOptions;
 
@@ -22,16 +21,18 @@ export class Server {
 		method = "any",
 		handler,
 	}: ServiceEndpoint<Request, Response>) {
+		const route = new Route(path);
+
 		const wrapped = new Set(typeof method === "string" ? [method] : method);
 
 		this.$app.any(path, async (response, request) => {
-			const context = await this.$router.retrieve<Request>(request, response);
+			const context = await route.retrieve<Request>(request, response);
 			if (context.signal.aborted) {
 				return;
 			}
 			// TODO this fails if there are separate handlers registered for this route
 			if (!wrapped.has(context.method) && !wrapped.has("any")) {
-				this.$router.send(response, {
+				route.send(response, {
 					code: 405,
 					headers: {
 						allow: [...wrapped].join(", "),
@@ -48,13 +49,13 @@ export class Server {
 				if (context.signal.aborted) {
 					return;
 				}
-				this.$router.send(response, result);
+				route.send(response, result);
 			} catch {
 				// TODO we might want to introduce proper error handling here?
 				if (context.signal.aborted) {
 					return;
 				}
-				this.$router.send(response, {
+				route.send(response, {
 					code: 500,
 				});
 			}

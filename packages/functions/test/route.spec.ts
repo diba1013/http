@@ -1,21 +1,22 @@
 import type { ServiceRequestHeaders } from "@/global.types";
 import type { HttpRequest, HttpResponse } from "uWebSockets.js";
-import { Router } from "@/route";
+import { Route } from "@/route";
 import { type Mock, afterEach, beforeEach, describe, expect, it, vi } from "vitest";
 import { type MockProxy, mock, mockReset } from "vitest-mock-extended";
 
-describe("Router", () => {
-	let cut: Router;
+describe("Route", () => {
+	let cut: Route;
 	let request: MockProxy<HttpRequest>;
 	let response: MockProxy<HttpResponse>;
 
 	let headers: Mock<[], ServiceRequestHeaders>;
 	let body: Mock<[], string[]>;
+	let parameters: Mock<[], string[]>;
 
 	let signal: AbortController;
 
 	beforeEach(() => {
-		cut = new Router();
+		cut = new Route("/files/:namespace");
 
 		signal = new AbortController();
 
@@ -26,6 +27,9 @@ describe("Router", () => {
 		});
 		body = vi.fn(() => {
 			return ["{", '"id": 123', ",", '"name": "Test"', "}"];
+		});
+		parameters = vi.fn(() => {
+			return ["settings"];
 		});
 
 		request = mock<HttpRequest>({
@@ -40,6 +44,10 @@ describe("Router", () => {
 			getUrl: vi.fn(() => {
 				return "/";
 			}),
+
+			getParameter(index) {
+				return parameters()[index];
+			},
 
 			forEach(handler) {
 				handler("host", "example.com");
@@ -91,10 +99,13 @@ describe("Router", () => {
 		expect(result.method).to.be.eq("post");
 		expect(result.url.host).is.eq("example.com");
 		expect(result.url.pathname).is.eq("/foo");
-		expect(result.context).to.have.deep.property("a", ["1", "2", "3"]);
-		expect(result.context).to.have.property("b", "hello");
-		expect(result.context).to.have.property("id", 123);
-		expect(result.context).to.have.property("name", "Test");
+		expect(result.context).to.eql({
+			a: ["1", "2", "3"],
+			b: "hello",
+			id: 123,
+			name: "Test",
+			namespace: "settings",
+		});
 		expect(result.signal.aborted).to.be.false;
 	});
 
