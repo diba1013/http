@@ -6,7 +6,7 @@ export type ServiceRequestBody = {
 };
 export type ServiceRequestMethod = RequestMethod;
 export type ServiceRequestHeaders = RequestHeaders;
-export type ServiceResponseBody = RequestBody;
+export type ServiceResponseBody = RequestBody | string;
 export type ServiceResponseHeaders = ResponseHeaders;
 
 export type ServiceEndpointContext<Context> = {

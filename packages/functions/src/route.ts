@@ -14,15 +14,17 @@ export class Router {
 		request: HttpRequest,
 		signal: AbortSignal,
 	): ServiceEndpointContext<Partial<Request>> {
-		const path = request.getUrl() ?? "/";
-		const url = new URL(`${path}?${request.getQuery()}`, `http://${request.getHeader("host")}`);
-		const method = request.getMethod() as ServiceRequestMethod;
 		const headers: ServiceRequestHeaders = {};
 		// There is no alternative iteration method for headers available
 		// eslint-disable-next-line unicorn/no-array-for-each
 		request.forEach((key, value) => {
 			headers[key] = value;
 		});
+
+		const path = request.getUrl();
+		// TODO is this sensible or can this cause security issues?
+		const url = new URL(`${path}?${request.getQuery()}`, `http://${headers.host ?? "localhost"}`);
+		const method = request.getMethod() as ServiceRequestMethod;
 
 		// TODO Do we want to add url params here too?
 		const context: Record<string, string | string[]> = {};
@@ -53,11 +55,24 @@ export class Router {
 
 	private readContent(response: HttpResponse, signal: AbortSignal): Promise<string> {
 		// TODO investigate memory leak if request is aborted while body is read
-		return new Promise((resolve) => {
-			let buffer: Buffer = Buffer.from("");
+		return new Promise((resolve, reject) => {
+			const listener = () => {
+				reject(signal.reason);
+			};
 
+			// If the signal is already aborted, immediately cancel reading.
+			if (signal.aborted) {
+				listener();
+				return;
+			}
+
+			signal.addEventListener("abort", listener, {
+				once: true,
+			});
+
+			let buffer: Buffer = Buffer.from("");
 			response.onData((chunk, isLast) => {
-				// TODO how to handle rejection? Is this method still called if request is aborted?
+				// Do not further process this chunk (if this is even called)
 				if (signal.aborted) {
 					return;
 				}
@@ -65,6 +80,7 @@ export class Router {
 				// buffer = Buffer.concat([buffer, chunk])
 				buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
 				if (isLast) {
+					signal.removeEventListener("abort", listener);
 					resolve(buffer.toString());
 				}
 			});
@@ -141,15 +157,21 @@ export class Router {
 
 			switch (true) {
 				case typeof body === "string": {
+					if (headers["content-type"] === undefined) {
+						response.writeHeader("content-type", "text/plain");
+					}
 					response.end(body);
 					break;
 				}
 				case typeof body === "object": {
+					if (headers["content-type"] === undefined) {
+						response.writeHeader("content-type", "application/json");
+					}
 					response.end(JSON.stringify(body));
 					break;
 				}
 				default: {
-					response.endWithoutBody();
+					response.end();
 				}
 			}
 		});

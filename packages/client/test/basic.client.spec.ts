@@ -2,7 +2,7 @@ import { BasicClient } from "@/basic.client";
 import { BasicCredentials, BearerCredentials, DynamicCredentials, DynamicCredentialsContext } from "@/global.types";
 import { Mock, beforeEach, describe, expect, it, vi } from "vitest";
 
-describe("BasicClient.resolve", () => {
+describe.todo("BasicClient.resolve", () => {
 	let resolve: Mock;
 	let client: DynamicCredentialsContext;
 

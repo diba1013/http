@@ -6,11 +6,14 @@ export type RequestMethod = "get" | "delete" | "head" | "options" | "post" | "pu
 export type RequestParameter = number | string;
 export type RequestParameters = Record<string, MaybeArray<RequestParameter> | undefined>;
 export type RequestBody = MaybeArray<{
-	[K in string]: MaybeArray<RequestParameter> | RequestBody | undefined;
+	[K in string]: unknown;
 }>;
 
 export type CommonHeaders = {
+	accept?: string;
+	authorization?: string;
 	"content-type"?: string;
+	host?: string;
 };
 
 export type RequestHeaders = CommonHeaders & Record<string, string | string[] | undefined>;
