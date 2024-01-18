@@ -1,5 +1,8 @@
-import { it } from "vitest";
+import { describe, expect, it } from "vitest";
 
-it.todo("empty", () => {
-	// Ignore
+describe("empty", () => {
+	it("empty", () => {
+		// Ignore
+		expect(1).to.be.eq(1);
+	});
 });

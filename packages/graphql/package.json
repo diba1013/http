@@ -27,9 +27,7 @@
 	"types": "./dist/index.d.ts",
 	"scripts": {
 		"build": "tscz",
-		"build:watch": "tscz --watch",
-		"test": "vitest run",
-		"test:watch": "vitest"
+		"build:watch": "tscz --watch"
 	},
 	"dependencies": {
 		"@diba1013/fetch": "workspace:*",
@@ -38,7 +36,6 @@
 	"devDependencies": {
 		"@diba1013/tscz": "0.2.1",
 		"@types/node": "^20.11.5",
-		"@vitest/coverage-v8": "^1.2.0",
 		"typescript": "~5.3",
 		"vitest": "^1.2.0"
 	}

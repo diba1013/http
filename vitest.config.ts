@@ -1,11 +1,8 @@
+import alias from "vite-tsconfig-paths";
 import { defineConfig } from "vitest/config";
 
 export default defineConfig({
-	resolve: {
-		alias: {
-			"@": "/src",
-		},
-	},
+	plugins: [alias()],
 	test: {
 		environment: "node",
 		restoreMocks: true,
@@ -13,8 +10,8 @@ export default defineConfig({
 			enabled: true,
 			all: true,
 			provider: "v8",
-			include: ["src/**/*.ts"],
-			exclude: ["src/**/*.types.ts"],
+			include: ["packages/**/src/**/*.ts"],
+			exclude: ["packages/**/src/**/*.types.ts"],
 			reporter: ["html", "text-summary", "lcovonly"],
 		},
 	},

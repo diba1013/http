@@ -4,7 +4,16 @@
 			"path": "packages/client/tsconfig.json",
 		},
 		{
+			"path": "packages/functions/tsconfig.json",
+		},
+		{
 			"path": "packages/graphql/tsconfig.json",
+		},
+		{
+			"path": "packages/rest/tsconfig.json",
+		},
+		{
+			"path": "tsconfig.test.json",
 		},
 	],
 }

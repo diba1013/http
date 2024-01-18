@@ -8,5 +8,5 @@
 			"@/*": ["src/*"],
 		},
 	},
-	"include": ["src/**/*.ts", "test/**/*.ts", "vitest.config.ts", "tscz.config.ts", "package.json"],
+	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts", "package.json"],
 }

@@ -32,7 +32,7 @@ jobs:
 
       - name: Build
         run: |
-          pnpm -r build
+          pnpm build
 
       - name: Lint
         run: |
@@ -40,4 +40,4 @@ jobs:
 
       - name: Test
         run: |
-          pnpm -r test
+          pnpm test

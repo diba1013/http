@@ -9,5 +9,5 @@
 		},
 		"verbatimModuleSyntax": true,
 	},
-	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts", "vitest.config.ts", "package.json"],
+	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts", "package.json"],
 }
