@@ -58,17 +58,18 @@ export class Route {
 				once: true,
 			});
 
-			let buffer: Buffer = Buffer.from("");
+			const buffers: Buffer[] = [];
 			response.onData((chunk, isLast) => {
 				// Do not further process this chunk (if this is even called)
 				if (signal.aborted) {
 					return;
 				}
+				buffers.push(Buffer.from(chunk));
 
 				// buffer = Buffer.concat([buffer, chunk])
-				buffer = Buffer.concat([buffer, Buffer.from(chunk)]);
 				if (isLast) {
 					signal.removeEventListener("abort", listener);
+					const buffer = Buffer.concat(buffers);
 					resolve(buffer.toString());
 				}
 			});
