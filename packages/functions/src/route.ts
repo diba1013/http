@@ -29,11 +29,11 @@ export class Route {
 		});
 
 		const method = request.getMethod() as ServiceRequestMethod;
-		const { url, context } = this.$path.pluck(request, headers);
+		const { path, context } = this.$path.pluck(request);
 
 		return {
 			method,
-			url,
+			path,
 			headers,
 			// This is most likely not a full object
 			context: context as Partial<Request>,
@@ -122,7 +122,7 @@ export class Route {
 		const body = await this.parseBody(response, context);
 
 		return {
-			url: context.url,
+			path: context.path,
 			method: context.method,
 			headers: context.headers,
 			// We might be missing a few properties, but that needs to be validated by the handler

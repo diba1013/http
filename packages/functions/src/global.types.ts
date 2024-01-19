@@ -10,7 +10,7 @@ export type ServiceResponseBody = RequestBody | string;
 export type ServiceResponseHeaders = ResponseHeaders;
 
 export type ServiceEndpointContext<Context> = {
-	url: URL;
+	path: string;
 	method: ServiceRequestMethod;
 	headers: ServiceRequestHeaders;
 	context: Context;

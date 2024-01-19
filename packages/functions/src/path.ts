@@ -1,8 +1,7 @@
-import type { ServiceRequestHeaders } from "@/global.types";
 import type { HttpRequest } from "uWebSockets.js";
 
 export type RoutePathContext = {
-	url: URL;
+	path: string;
 	context: Record<string, string | string[]>;
 };
 
@@ -26,10 +25,9 @@ export class RoutePath {
 		}
 	}
 
-	public pluck(request: HttpRequest, { host = request.getHeader("host") }: ServiceRequestHeaders = {}) {
+	public pluck(request: HttpRequest): RoutePathContext {
 		const path = request.getUrl();
-		// TODO do we need a fallback here (env or localhost) if that is not a security concern?
-		const url = new URL(`${path}?${request.getQuery()}`, `http://${host}`);
+		const query = new URLSearchParams(request.getQuery());
 
 		const context: Record<string, string | string[]> = {};
 		function merge(key: string, value: string) {
@@ -47,12 +45,12 @@ export class RoutePath {
 			context[key] = merge(key, value);
 		}
 		// Append query parameters second
-		for (const [key, value] of url.searchParams) {
+		for (const [key, value] of query) {
 			context[key] = merge(key, value);
 		}
 
 		return {
-			url,
+			path,
 			context,
 		};
 	}

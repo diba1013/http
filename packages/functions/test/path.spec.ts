@@ -79,13 +79,6 @@ describe("Route#pluck", () => {
 			getParameter(index) {
 				return parameters[index];
 			},
-
-			getHeader(key) {
-				if (key === "host") {
-					return "example.com";
-				}
-				return "";
-			},
 		});
 	});
 
@@ -96,10 +89,9 @@ describe("Route#pluck", () => {
 	it("should correctly build complex content", () => {
 		request.getQuery.mockReturnValue("file=config.json&file=spec.json&file=license.json&operation=copy&id=345");
 
-		const { url, context } = cut.pluck(request);
+		const { path, context } = cut.pluck(request);
 
-		expect(url.host).to.eq("example.com");
-		expect(url.pathname).to.eq("/file/settings/copy/123");
+		expect(path).to.eq("/file/settings/copy/123");
 		expect(context).to.eql({
 			namespace: "settings",
 			id: ["123", "345"],

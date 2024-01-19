@@ -97,8 +97,7 @@ describe("Route", () => {
 		const result = await cut.retrieve(request, response);
 
 		expect(result.method).to.be.eq("post");
-		expect(result.url.host).is.eq("example.com");
-		expect(result.url.pathname).is.eq("/foo");
+		expect(result.path).is.eq("/foo");
 		expect(result.context).to.eql({
 			a: ["1", "2", "3"],
 			b: "hello",
