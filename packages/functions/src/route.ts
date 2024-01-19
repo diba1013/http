@@ -28,30 +28,8 @@ export class Route {
 			headers[key] = value;
 		});
 
-		const path = request.getUrl();
-		// TODO is this sensible or can this cause security issues?
-		const url = new URL(`${path}?${request.getQuery()}`, `http://${headers.host ?? "localhost"}`);
 		const method = request.getMethod() as ServiceRequestMethod;
-
-		const context: Record<string, string | string[]> = {};
-		function merge(key: string, value: string) {
-			const seen = context[key];
-			if (seen === undefined) {
-				return value;
-			}
-			if (Array.isArray(seen)) {
-				return [...seen, value];
-			}
-			return [seen, value];
-		}
-		// Append path parameters first
-		for (const [key, value] of this.$path.match(request)) {
-			context[key] = merge(key, value);
-		}
-		// Append query parameters second
-		for (const [key, value] of url.searchParams) {
-			context[key] = merge(key, value);
-		}
+		const { url, context } = this.$path.pluck(request, headers);
 
 		return {
 			method,
