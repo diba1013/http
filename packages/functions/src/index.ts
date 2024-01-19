@@ -1,2 +1,2 @@
 export * from "@/global.types";
-export * from "@/server";
+export { Server as App, type ServerlessOptions } from "@/server";
