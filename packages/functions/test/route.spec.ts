@@ -94,26 +94,28 @@ describe("Route", () => {
 		request.getUrl.mockReturnValue("/foo");
 		request.getQuery.mockReturnValue("a=1&a=2&b=hello&a=3");
 
-		const result = await cut.retrieve(request, response);
+		const { method, path, context, signal } = cut.retrieve(request, response);
+		const result = await context.json();
 
-		expect(result.method).to.be.eq("post");
-		expect(result.path).is.eq("/foo");
-		expect(result.context).to.eql({
+		expect(method).to.be.eq("post");
+		expect(path).is.eq("/foo");
+		expect(result).to.eql({
 			a: ["1", "2", "3"],
 			b: "hello",
 			id: 123,
 			name: "Test",
 			namespace: "settings",
 		});
-		expect(result.signal.aborted).to.be.false;
+		expect(signal.aborted).to.be.false;
 	});
 
 	it("retrieve with invalid body content should not be parsed", async () => {
 		body.mockReturnValue(["{", "abc", "}"]);
 
-		const result = await cut.retrieve(request, response);
+		const { context } = cut.retrieve(request, response);
+		const result = await context.body();
 
-		expect(result.context).not.to.have.property("abc");
+		expect(result).not.to.have.property("abc");
 	});
 
 	it("retrieve with invalid content-type content should not be parsed", async () => {
@@ -121,23 +123,25 @@ describe("Route", () => {
 			"content-type": "text/plain",
 		});
 
-		const result = await cut.retrieve(request, response);
+		const { context } = cut.retrieve(request, response);
+		const result = await context.body();
 
-		expect(result.context).not.to.have.property("id");
-		expect(result.context).not.to.have.property("name");
+		expect(result).not.to.have.property("id");
+		expect(result).not.to.have.property("name");
 	});
 
 	it("retrieve with aborted request should not append body", async () => {
 		signal.abort();
 
-		const result = await cut.retrieve(request, response);
+		const { context } = cut.retrieve(request, response);
+		const result = await context.json();
 
-		expect(result.context).not.to.have.property("id");
-		expect(result.context).not.to.have.property("name");
+		expect(result).not.to.have.property("id");
+		expect(result).not.to.have.property("name");
 	});
 
-	it("retrieve should handle abort signal", async () => {
-		const result = await cut.retrieve(request, response);
+	it("retrieve should handle abort signal", () => {
+		const result = cut.retrieve(request, response);
 
 		signal.abort();
 

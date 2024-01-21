@@ -73,7 +73,7 @@ describe("Route#pluck", () => {
 			},
 
 			getQuery: vi.fn(() => {
-				return "";
+				return "file=config.json&file=spec.json&file=license.json&operation=copy&id=345";
 			}),
 
 			getParameter(index) {
@@ -86,15 +86,31 @@ describe("Route#pluck", () => {
 		mockReset(request);
 	});
 
-	it("should correctly build complex content", () => {
-		request.getQuery.mockReturnValue("file=config.json&file=spec.json&file=license.json&operation=copy&id=345");
+	it("query should correctly build complex content without parameters", () => {
+		const context = cut.pluck(request);
 
-		const { path, context } = cut.pluck(request);
+		expect(context.query()).to.eql({
+			id: "345",
+			file: ["config.json", "spec.json", "license.json"],
+			operation: "copy",
+		});
+	});
 
-		expect(path).to.eq("/file/settings/copy/123");
-		expect(context).to.eql({
+	it("params should correctly build complex content without query", () => {
+		const context = cut.pluck(request);
+
+		expect(context.params()).to.eql({
+			id: "123",
 			namespace: "settings",
+		});
+	});
+
+	it("all should correctly build complex content", () => {
+		const context = cut.pluck(request);
+
+		expect(context.all()).to.eql({
 			id: ["123", "345"],
+			namespace: "settings",
 			file: ["config.json", "spec.json", "license.json"],
 			operation: "copy",
 		});

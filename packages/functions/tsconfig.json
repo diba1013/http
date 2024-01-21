@@ -6,8 +6,9 @@
 		"lib": ["ESNext", "DOM"],
 		"paths": {
 			"@/*": ["src/*"],
+			"@diba1013/functions": ["src/index.ts"],
 		},
 		"verbatimModuleSyntax": true,
 	},
-	"include": ["src/**/*.ts", "test/**/*.ts", "tscz.config.ts", "package.json"],
+	"include": ["src/**/*.ts", "test/**/*.ts", "examples/**/*.ts", "tscz.config.ts", "package.json"],
 }

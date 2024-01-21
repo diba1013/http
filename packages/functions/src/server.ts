@@ -175,7 +175,8 @@ export class Server {
 		const wrapped = new Set(typeof method === "string" ? [method] : method);
 
 		this.$app.any(path, async (response, request) => {
-			const context = await route.retrieve<Request>(request, response);
+			const context = route.retrieve<Request>(request, response);
+			// Just checking that we still can use the response object
 			if (context.signal.aborted) {
 				return;
 			}
@@ -198,7 +199,7 @@ export class Server {
 				if (context.signal.aborted) {
 					return;
 				}
-				route.send(response, result);
+				route.send(response, result ?? {});
 			} catch {
 				// TODO we might want to introduce proper error handling here?
 				if (context.signal.aborted) {
